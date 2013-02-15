@@ -4,7 +4,7 @@
 
 Name:       jsoncpp
 Version:    %{src_release}
-Release:    0.7.%{src_prerelease}%{?dist}
+Release:    0.8.%{src_prerelease}%{?dist}
 Summary:    An implementation of a JSON reader and writer in C++
 Group:      System Environment/Libraries
 License:    Public Domain or MIT
@@ -21,6 +21,7 @@ C++. JSON (JavaScript Object Notation) is a lightweight data-interchange format.
 It is easy for humans to read and write. It is easy for machines to parse and
 generate.
 
+
 %package devel
 Summary:    Development headers and library for %{name}
 Group:      Development/Libraries
@@ -28,6 +29,15 @@ Requires:   %{name}%{?_isa} = %{version}-%{release}
 
 %description devel
 This package contains the development headers and library for %{name}.
+
+
+%package doc
+Summary:    Documentation for %{name}
+Group:      Documentation
+BuildArch:  noarch
+
+%description doc
+This package contains the documentation for %{name}
 
 
 %prep
@@ -70,9 +80,14 @@ sed -i 's|@@LIBDIR@@|%{_libdir}|g' $RPM_BUILD_ROOT%{_libdir}/pkgconfig/jsoncpp.p
 %{_libdir}/lib%{name}.so
 %{_includedir}/%{name}/
 %{_libdir}/pkgconfig/jsoncpp.pc
+
+%files doc
 %{_docdir}/%{name}
 
 %changelog
+* Fri Feb 15 2013 Sebastien Willmann <sebastien.willmann@gmail.com> - 0.6.0-0.8.rc2
+- Added documentation sub-package
+
 * Sun Jan 20 2013 Sebastien Willmann <sebastien.willmann@gmail.com> - 0.6.0-0.7.rc2
 - Added graphviz as a BuildRequire
 
