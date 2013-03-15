@@ -4,15 +4,15 @@
 
 Name:       jsoncpp
 Version:    %{src_release}
-Release:    0.8.%{src_prerelease}%{?dist}
-Summary:    An implementation of a JSON reader and writer in C++
+Release:    0.9.%{src_prerelease}%{?dist}
+Summary:    JSON library implemented in C++
 Group:      System Environment/Libraries
 License:    Public Domain or MIT
 URL:        http://sourceforge.net/projects/%{name}/
 Source0:    http://downloads.sourceforge.net/project/%{name}/%{name}/%{src_version}/%{name}-src-%{src_version}.tar.gz
 Source1:    jsoncpp.pc
 
-BuildRequires:  scons doxygen
+BuildRequires:  python scons doxygen
 BuildRequires:  graphviz
 
 %description
@@ -82,9 +82,15 @@ sed -i 's|@@LIBDIR@@|%{_libdir}|g' $RPM_BUILD_ROOT%{_libdir}/pkgconfig/jsoncpp.p
 %{_libdir}/pkgconfig/jsoncpp.pc
 
 %files doc
+%doc AUTHORS LICENSE NEWS.txt README.txt
 %{_docdir}/%{name}
 
 %changelog
+* Fri Mar 15 2013 Sébastien Willmann <sebastien.willmann@gmail.com> - 0.6.0-0.9.rc2
+- Changed Summary
+- Added %%doc files to the doc package
+- Added python as an explicit BuildRequires
+
 * Fri Feb 15 2013 Sebastien Willmann <sebastien.willmann@gmail.com> - 0.6.0-0.8.rc2
 - Added documentation sub-package
 
