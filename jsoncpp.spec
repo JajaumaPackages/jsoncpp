@@ -4,7 +4,7 @@
 
 Name:       jsoncpp
 Version:    %{src_release}
-Release:    0.10.%{src_prerelease}%{?dist}
+Release:    0.11.%{src_prerelease}%{?dist}
 Summary:    JSON library implemented in C++
 Group:      System Environment/Libraries
 License:    Public Domain or MIT
@@ -62,8 +62,11 @@ ln -s %{_libdir}/lib%{name}.so.0.0.0 $RPM_BUILD_ROOT%{_libdir}/lib%{name}.so.0
 
 install -d $RPM_BUILD_ROOT%{_includedir}/%{name}/json
 install -p -m 0644 include/json/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/json
-install -d $RPM_BUILD_ROOT%{_docdir}/%{name}
-install -p -m 0644 dist/doxygen/*/*.{html,png} $RPM_BUILD_ROOT%{_docdir}/%{name}
+mkdir -p $RPM_BUILD_ROOT%{_docdir}/%{name}/html
+for f in AUTHORS LICENSE NEWS.txt README.txt ; do
+    install -p -m 0644 $f $RPM_BUILD_ROOT%{_docdir}/%{name}
+done
+install -p -m 0644 dist/doxygen/*/*.{html,png} $RPM_BUILD_ROOT%{_docdir}/%{name}/html
 install -d $RPM_BUILD_ROOT%{_libdir}/pkgconfig
 install -p -m 0644 %{SOURCE1} $RPM_BUILD_ROOT%{_libdir}/pkgconfig/
 sed -i 's|@@LIBDIR@@|%{_libdir}|g' $RPM_BUILD_ROOT%{_libdir}/pkgconfig/jsoncpp.pc
@@ -72,7 +75,8 @@ sed -i 's|@@LIBDIR@@|%{_libdir}|g' $RPM_BUILD_ROOT%{_libdir}/pkgconfig/jsoncpp.p
 %postun -p /sbin/ldconfig
 
 %files
-%doc AUTHORS LICENSE NEWS.txt README.txt
+%{_docdir}/%{name}/
+%exclude %{_docdir}/%{name}/html
 %{_libdir}/lib%{name}.so.0
 %{_libdir}/lib%{name}.so.0.0.0
 
@@ -82,10 +86,13 @@ sed -i 's|@@LIBDIR@@|%{_libdir}|g' $RPM_BUILD_ROOT%{_libdir}/pkgconfig/jsoncpp.p
 %{_libdir}/pkgconfig/jsoncpp.pc
 
 %files doc
-%doc AUTHORS LICENSE NEWS.txt README.txt
-%{_docdir}/%{name}
+%{_docdir}/%{name}/
 
 %changelog
+* Tue Sep 10 2013 Sébastien Willmann <sebastien.willmann@gmail.com> - 0.6.0-0.11.rc2
+- https://bugzilla.redhat.com/show_bug.cgi?id=998149 : applied Michael Schwendt's
+  patch to fix duplicated documentation
+
 * Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.6.0-0.10.rc2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
