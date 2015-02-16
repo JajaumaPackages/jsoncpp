@@ -4,7 +4,7 @@
 
 Name:       jsoncpp
 Version:    %{src_release}
-Release:    0.14.%{src_prerelease}%{?dist}
+Release:    0.15.%{src_prerelease}%{?dist}
 Summary:    JSON library implemented in C++
 Group:      System Environment/Libraries
 License:    Public Domain or MIT
@@ -93,6 +93,9 @@ sed -i 's|@@LIBDIR@@|%{_libdir}|g' $RPM_BUILD_ROOT%{_libdir}/pkgconfig/jsoncpp.p
 %{_docdir}/%{name}/
 
 %changelog
+* Mon Feb 16 2015 Orion Poplawski <orion@cora.nwra.com> - 0.6.0-0.15.rc2
+- Rebuild for gcc 5 C++11
+
 * Sun Sep 21 2014 Sébastien Willmann <sebastien.willmann@gmail.com> - 0.6.0-0.14.rc2
 - Allow int values to be converted to string (#1143774)
 
