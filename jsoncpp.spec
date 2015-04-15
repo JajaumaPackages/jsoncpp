@@ -46,7 +46,7 @@ This package contains the documentation for %{name}
 %setup -q -n %{name}-src-%{src_version}
 %patch0 -dsrc/lib_json -p1
 grep -e "-Wall" SConstruct
-sed 's/CCFLAGS = "-Wall"/CCFLAGS = "%{optflags}"/' -i SConstruct
+sed 's|CCFLAGS = "-Wall"|CCFLAGS = "%{optflags}"|' -i SConstruct
 
 %build
 scons platform=linux-gcc %{?_smp_mflags}
