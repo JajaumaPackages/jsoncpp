@@ -4,7 +4,7 @@
 
 Name:       jsoncpp
 Version:    %{src_release}
-Release:    0.16.%{src_prerelease}%{?dist}
+Release:    0.17.%{src_prerelease}%{?dist}
 Summary:    JSON library implemented in C++
 Group:      System Environment/Libraries
 License:    Public Domain or MIT
@@ -93,6 +93,9 @@ sed -i 's|@@LIBDIR@@|%{_libdir}|g' $RPM_BUILD_ROOT%{_libdir}/pkgconfig/jsoncpp.p
 %{_docdir}/%{name}/
 
 %changelog
+* Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.6.0-0.17.rc2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
 * Wed Apr 15 2015 Orion Poplawski <orion@cora.nwra.com> - 0.6.0-0.16.rc2
 - Rebuild for gcc 5 C++11 ABI change
 
