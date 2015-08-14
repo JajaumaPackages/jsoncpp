@@ -4,7 +4,7 @@
 
 Name:       jsoncpp
 Version:    %{src_release}
-Release:    0.17.%{src_prerelease}%{?dist}
+Release:    0.18.%{src_prerelease}%{?dist}
 Summary:    JSON library implemented in C++
 Group:      System Environment/Libraries
 License:    Public Domain or MIT
@@ -51,7 +51,7 @@ sed 's|CCFLAGS = "-Wall"|CCFLAGS = "%{optflags}"|' -i SConstruct
 %build
 scons platform=linux-gcc %{?_smp_mflags}
 # Now, lets make a proper shared lib. :P
-g++ -o libjsoncpp.so.0.0.0 -shared -Wl,-soname,libjsoncpp.so.0 buildscons/linux-gcc-*/src/lib_json/*.os -lpthread
+g++ -o libjsoncpp.so.0.0.0 -shared -Wl,-z,now -Wl,-soname,libjsoncpp.so.0 buildscons/linux-gcc-*/src/lib_json/*.os -lpthread
 # Build the doc
 python doxybuild.py --with-dot --doxygen %{_bindir}/doxygen
 
@@ -93,6 +93,9 @@ sed -i 's|@@LIBDIR@@|%{_libdir}|g' $RPM_BUILD_ROOT%{_libdir}/pkgconfig/jsoncpp.p
 %{_docdir}/%{name}/
 
 %changelog
+* Fri Aug 14 2015 Adam Jackson <ajax@redhat.com> 0.6.0-0.18.rc2
+- Link libjsoncpp with -z now
+
 * Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.6.0-0.17.rc2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
