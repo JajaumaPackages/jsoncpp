@@ -1,18 +1,12 @@
-%global src_release 0.6.0
-%global src_prerelease rc2
-%global src_version %{src_release}-%{src_prerelease}
-
 Name:       jsoncpp
-Version:    %{src_release}
-Release:    0.18.%{src_prerelease}%{?dist}
+Version:    0.10.5
+Release:    1
 Summary:    JSON library implemented in C++
 Group:      System Environment/Libraries
 License:    Public Domain or MIT
-URL:        http://sourceforge.net/projects/%{name}/
-Source0:    http://downloads.sourceforge.net/project/%{name}/%{name}/%{src_version}/%{name}-src-%{src_version}.tar.gz
+URL:        https://github.com/open-source-parsers/jsoncpp
+Source0:    https://github.com/open-source-parsers/%{name}/archive/%{version}.tar.gz#/%{name}-%{version}.tar.gz
 Source1:    jsoncpp.pc
-
-Patch0:     asstring.patch
 
 BuildRequires:  python scons doxygen
 BuildRequires:  graphviz
@@ -43,8 +37,7 @@ This package contains the documentation for %{name}
 
 
 %prep
-%setup -q -n %{name}-src-%{src_version}
-%patch0 -dsrc/lib_json -p1
+%setup -q -n %{name}-%{version}
 grep -e "-Wall" SConstruct
 sed 's|CCFLAGS = "-Wall"|CCFLAGS = "%{optflags}"|' -i SConstruct
 
@@ -56,8 +49,7 @@ g++ -o libjsoncpp.so.0.0.0 -shared -Wl,-z,now -Wl,-soname,libjsoncpp.so.0 builds
 python doxybuild.py --with-dot --doxygen %{_bindir}/doxygen
 
 %check
-# Fails due to patch0
-# scons platform=linux-gcc check %{?_smp_mflags}
+scons platform=linux-gcc check %{?_smp_mflags}
 
 %install
 install -p -D lib%{name}.so.0.0.0 $RPM_BUILD_ROOT%{_libdir}/lib%{name}.so.0.0.0
@@ -67,7 +59,7 @@ ln -s %{_libdir}/lib%{name}.so.0.0.0 $RPM_BUILD_ROOT%{_libdir}/lib%{name}.so.0
 install -d $RPM_BUILD_ROOT%{_includedir}/%{name}/json
 install -p -m 0644 include/json/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/json
 mkdir -p $RPM_BUILD_ROOT%{_docdir}/%{name}/html
-for f in AUTHORS LICENSE NEWS.txt README.txt ; do
+for f in AUTHORS LICENSE NEWS.txt README.md ; do
     install -p -m 0644 $f $RPM_BUILD_ROOT%{_docdir}/%{name}
 done
 install -p -m 0644 dist/doxygen/*/*.{html,png} $RPM_BUILD_ROOT%{_docdir}/%{name}/html
@@ -93,6 +85,9 @@ sed -i 's|@@LIBDIR@@|%{_libdir}|g' $RPM_BUILD_ROOT%{_libdir}/pkgconfig/jsoncpp.p
 %{_docdir}/%{name}/
 
 %changelog
+* Sun Sep 13 2015 Sébastien Willmann <sebastien.willmann@gmail.com> - 0.10.5-1
+- Update to version 0.10.5
+
 * Fri Aug 14 2015 Adam Jackson <ajax@redhat.com> 0.6.0-0.18.rc2
 - Link libjsoncpp with -z now
 
