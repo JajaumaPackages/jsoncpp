@@ -1,6 +1,8 @@
+%global jsondir json
+
 Name:       jsoncpp
 Version:    0.10.5
-Release:    1
+Release:    2
 Summary:    JSON library implemented in C++
 Group:      System Environment/Libraries
 License:    Public Domain or MIT
@@ -8,7 +10,8 @@ URL:        https://github.com/open-source-parsers/jsoncpp
 Source0:    https://github.com/open-source-parsers/%{name}/archive/%{version}.tar.gz#/%{name}-%{version}.tar.gz
 Source1:    jsoncpp.pc
 
-BuildRequires:  python scons doxygen
+BuildRequires:  doxygen cmake
+BuildRequires:  python
 BuildRequires:  graphviz
 
 %description
@@ -38,26 +41,19 @@ This package contains the documentation for %{name}
 
 %prep
 %setup -q -n %{name}-%{version}
-grep -e "-Wall" SConstruct
-sed 's|CCFLAGS = "-Wall"|CCFLAGS = "%{optflags}"|' -i SConstruct
 
 %build
-scons platform=linux-gcc %{?_smp_mflags}
-# Now, lets make a proper shared lib. :P
-g++ -o libjsoncpp.so.0.0.0 -shared -Wl,-z,now -Wl,-soname,libjsoncpp.so.0 buildscons/linux-gcc-*/src/lib_json/*.os -lpthread
+%cmake -DBUILD_STATIC_LIBS=OFF .
+make %{?_smp_mflags}
 # Build the doc
 python doxybuild.py --with-dot --doxygen %{_bindir}/doxygen
 
 %check
-scons platform=linux-gcc check %{?_smp_mflags}
+ctest -V %{?_smp_mflags}
 
 %install
-install -p -D lib%{name}.so.0.0.0 $RPM_BUILD_ROOT%{_libdir}/lib%{name}.so.0.0.0
-ln -s %{_libdir}/lib%{name}.so.0.0.0 $RPM_BUILD_ROOT%{_libdir}/lib%{name}.so
-ln -s %{_libdir}/lib%{name}.so.0.0.0 $RPM_BUILD_ROOT%{_libdir}/lib%{name}.so.0
+make install DESTDIR=%{buildroot}
 
-install -d $RPM_BUILD_ROOT%{_includedir}/%{name}/json
-install -p -m 0644 include/json/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/json
 mkdir -p $RPM_BUILD_ROOT%{_docdir}/%{name}/html
 for f in AUTHORS LICENSE NEWS.txt README.md ; do
     install -p -m 0644 $f $RPM_BUILD_ROOT%{_docdir}/%{name}
@@ -73,18 +69,20 @@ sed -i 's|@@LIBDIR@@|%{_libdir}|g' $RPM_BUILD_ROOT%{_libdir}/pkgconfig/jsoncpp.p
 %files
 %{_docdir}/%{name}/
 %exclude %{_docdir}/%{name}/html
-%{_libdir}/lib%{name}.so.0
-%{_libdir}/lib%{name}.so.0.0.0
+%{_libdir}/lib%{name}.so.*
 
 %files devel
 %{_libdir}/lib%{name}.so
-%{_includedir}/%{name}/
+%{_includedir}/%{jsondir}/
 %{_libdir}/pkgconfig/jsoncpp.pc
 
 %files doc
 %{_docdir}/%{name}/
 
 %changelog
+* Sun Jan 03 2016 Sébastien Willmann <sebastien.willmann@gmail.com> - 0.10.5-2
+- Use cmake instead of scons
+
 * Sun Sep 13 2015 Sébastien Willmann <sebastien.willmann@gmail.com> - 0.10.5-1
 - Update to version 0.10.5
 
