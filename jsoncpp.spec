@@ -8,7 +8,6 @@ Group:      System Environment/Libraries
 License:    Public Domain or MIT
 URL:        https://github.com/open-source-parsers/jsoncpp
 Source0:    https://github.com/open-source-parsers/%{name}/archive/%{version}.tar.gz#/%{name}-%{version}.tar.gz
-Source1:    jsoncpp.pc
 
 BuildRequires:  doxygen cmake
 BuildRequires:  python
@@ -49,7 +48,8 @@ make %{?_smp_mflags}
 python doxybuild.py --with-dot --doxygen %{_bindir}/doxygen
 
 %check
-ctest -V %{?_smp_mflags}
+# Tests are run automatically in the build section
+# ctest -V %{?_smp_mflags}
 
 %install
 make install DESTDIR=%{buildroot}
@@ -59,9 +59,6 @@ for f in AUTHORS LICENSE NEWS.txt README.md ; do
     install -p -m 0644 $f $RPM_BUILD_ROOT%{_docdir}/%{name}
 done
 install -p -m 0644 dist/doxygen/*/*.{html,png} $RPM_BUILD_ROOT%{_docdir}/%{name}/html
-install -d $RPM_BUILD_ROOT%{_libdir}/pkgconfig
-install -p -m 0644 %{SOURCE1} $RPM_BUILD_ROOT%{_libdir}/pkgconfig/
-sed -i 's|@@LIBDIR@@|%{_libdir}|g' $RPM_BUILD_ROOT%{_libdir}/pkgconfig/jsoncpp.pc
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
