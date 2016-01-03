@@ -2,7 +2,7 @@
 
 Name:       jsoncpp
 Version:    0.10.5
-Release:    2
+Release:    2%{?dist}
 Summary:    JSON library implemented in C++
 Group:      System Environment/Libraries
 License:    Public Domain or MIT
@@ -77,6 +77,9 @@ install -p -m 0644 dist/doxygen/*/*.{html,png} $RPM_BUILD_ROOT%{_docdir}/%{name}
 %{_docdir}/%{name}/
 
 %changelog
+* Sun Jan  3 2016 Ville Skyttä <ville.skytta@iki.fi> - 0.10.5-2
+- Add disttag
+
 * Sun Jan 03 2016 Sébastien Willmann <sebastien.willmann@gmail.com> - 0.10.5-2
 - Use cmake instead of scons
 
