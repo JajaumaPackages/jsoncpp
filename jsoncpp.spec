@@ -2,12 +2,13 @@
 
 Name:       jsoncpp
 Version:    0.10.5
-Release:    3%{?dist}
+Release:    4%{?dist}
 Summary:    JSON library implemented in C++
 Group:      System Environment/Libraries
 License:    Public Domain or MIT
 URL:        https://github.com/open-source-parsers/jsoncpp
 Source0:    https://github.com/open-source-parsers/%{name}/archive/%{version}.tar.gz#/%{name}-%{version}.tar.gz
+Patch0:     nowerror.patch
 
 BuildRequires:  doxygen cmake
 BuildRequires:  python
@@ -40,9 +41,10 @@ This package contains the documentation for %{name}
 
 %prep
 %setup -q -n %{name}-%{version}
+%patch0 -p1
 
 %build
-%cmake -DBUILD_STATIC_LIBS=OFF .
+CMAKE_CXX_FLAGS="-Wno-error" %cmake -DBUILD_STATIC_LIBS=OFF .
 make %{?_smp_mflags}
 # Build the doc
 python doxybuild.py --with-dot --doxygen %{_bindir}/doxygen
@@ -77,6 +79,9 @@ install -p -m 0644 dist/doxygen/*/*.{html,png} $RPM_BUILD_ROOT%{_docdir}/%{name}
 %{_docdir}/%{name}/
 
 %changelog
+* Tue Feb 16 2016 Sébastien Willmann <sebastien.willmann@gmail.com> - 0.10.5-4
+- Disabled Werror
+
 * Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 0.10.5-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
