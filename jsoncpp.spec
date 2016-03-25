@@ -1,18 +1,18 @@
 %global jsondir json
 
 Name:       jsoncpp
-Version:    0.10.5
-Release:    4%{?dist}
+Version:    1.7.1
+Release:    1%{?dist}
 Summary:    JSON library implemented in C++
-Group:      System Environment/Libraries
+
 License:    Public Domain or MIT
 URL:        https://github.com/open-source-parsers/jsoncpp
 Source0:    https://github.com/open-source-parsers/%{name}/archive/%{version}.tar.gz#/%{name}-%{version}.tar.gz
-Patch0:     nowerror.patch
 
-BuildRequires:  doxygen cmake
-BuildRequires:  python
+BuildRequires:  cmake
+BuildRequires:  doxygen
 BuildRequires:  graphviz
+BuildRequires:  python
 
 %description
 %{name} is an implementation of a JSON (http://json.org) reader and writer in
@@ -23,7 +23,6 @@ generate.
 
 %package devel
 Summary:    Development headers and library for %{name}
-Group:      Development/Libraries
 Requires:   %{name}%{?_isa} = %{version}-%{release}
 
 %description devel
@@ -32,53 +31,77 @@ This package contains the development headers and library for %{name}.
 
 %package doc
 Summary:    Documentation for %{name}
-Group:      Documentation
 BuildArch:  noarch
 
 %description doc
-This package contains the documentation for %{name}
+This package contains the documentation for %{name}.
 
 
 %prep
 %setup -q -n %{name}-%{version}
-%patch0 -p1
+
 
 %build
-CMAKE_CXX_FLAGS="-Wno-error" %cmake -DBUILD_STATIC_LIBS=OFF .
+%cmake -DBUILD_STATIC_LIBS=OFF                \
+       -DJSONCPP_WITH_WARNING_AS_ERROR=OFF    \
+       -DJSONCPP_WITH_PKGCONFIG_SUPPORT=ON    \
+       -DJSONCPP_WITH_CMAKE_PACKAGE=ON        \
+       .
 make %{?_smp_mflags}
 # Build the doc
 python doxybuild.py --with-dot --doxygen %{_bindir}/doxygen
 
-%check
-# Tests are run automatically in the build section
-# ctest -V %{?_smp_mflags}
 
 %install
 make install DESTDIR=%{buildroot}
 
 mkdir -p $RPM_BUILD_ROOT%{_docdir}/%{name}/html
-for f in AUTHORS LICENSE NEWS.txt README.md ; do
+for f in NEWS.txt README.md ; do
     install -p -m 0644 $f $RPM_BUILD_ROOT%{_docdir}/%{name}
 done
 install -p -m 0644 dist/doxygen/*/*.{html,png} $RPM_BUILD_ROOT%{_docdir}/%{name}/html
 
+
+%check
+# Tests are run automatically in the build section
+# ctest -V %{?_smp_mflags}
+
+
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
+
 %files
-%{_docdir}/%{name}/
+%license AUTHORS LICENSE
+%doc %dir %{_docdir}/%{name}
+%doc %{_docdir}/%{name}/README.md
 %exclude %{_docdir}/%{name}/html
 %{_libdir}/lib%{name}.so.*
 
+
 %files devel
+%doc %dir %{_docdir}/%{name}
+%doc %{_docdir}/%{name}/NEWS.txt
 %{_libdir}/lib%{name}.so
 %{_includedir}/%{jsondir}/
+%{_libdir}/cmake
 %{_libdir}/pkgconfig/jsoncpp.pc
 
+
 %files doc
-%{_docdir}/%{name}/
+%license %{_datadir}/licenses/%{name}*
+%doc %{_docdir}/%{name}/
+
 
 %changelog
+* Fri Mar 25 2016 Björn Esser <fedora@besser82.io> - 1.7.1-1
+- Update to version 1.7.1
+- Use %%license and %%doc properly
+- Add generated CMake-target
+- Move %%check after %%install
+- Remove Group-tag, needed for el <= 5, only
+- Drop Patch0, not needed anymore
+
 * Tue Feb 16 2016 Sébastien Willmann <sebastien.willmann@gmail.com> - 0.10.5-4
 - Disabled Werror
 
