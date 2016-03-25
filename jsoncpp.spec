@@ -1,19 +1,18 @@
-%global src_release 0.6.0
-%global src_prerelease rc2
-%global src_version %{src_release}-%{src_prerelease}
+%global jsondir json
 
 Name:       jsoncpp
-Version:    %{src_release}
-Release:    0.9.%{src_prerelease}%{?dist}
+Version:    0.10.5
+Release:    1%{?dist}
 Summary:    JSON library implemented in C++
-Group:      System Environment/Libraries
-License:    Public Domain or MIT
-URL:        http://sourceforge.net/projects/%{name}/
-Source0:    http://downloads.sourceforge.net/project/%{name}/%{name}/%{src_version}/%{name}-src-%{src_version}.tar.gz
-Source1:    jsoncpp.pc
 
-BuildRequires:  python scons doxygen
+License:    Public Domain or MIT
+URL:        https://github.com/open-source-parsers/jsoncpp
+Source0:    https://github.com/open-source-parsers/%{name}/archive/%{version}.tar.gz#/%{name}-%{version}.tar.gz
+
+BuildRequires:  cmake
+BuildRequires:  doxygen
 BuildRequires:  graphviz
+BuildRequires:  python
 
 %description
 %{name} is an implementation of a JSON (http://json.org) reader and writer in
@@ -24,7 +23,6 @@ generate.
 
 %package devel
 Summary:    Development headers and library for %{name}
-Group:      Development/Libraries
 Requires:   %{name}%{?_isa} = %{version}-%{release}
 
 %description devel
@@ -33,59 +31,80 @@ This package contains the development headers and library for %{name}.
 
 %package doc
 Summary:    Documentation for %{name}
-Group:      Documentation
 BuildArch:  noarch
 
 %description doc
-This package contains the documentation for %{name}
+This package contains the documentation for %{name}.
 
 
 %prep
-%setup -q -n %{name}-src-%{src_version}
-grep -e "-Wall" SConstruct
-sed 's/CCFLAGS = "-Wall"/CCFLAGS = "%{optflags}"/' -i SConstruct
+%setup -q -n %{name}-%{version}
+
 
 %build
-scons platform=linux-gcc %{?_smp_mflags}
-# Now, lets make a proper shared lib. :P
-g++ -o libjsoncpp.so.0.0.0 -shared -Wl,-soname,libjsoncpp.so.0 buildscons/linux-gcc-*/src/lib_json/*.os -lpthread
+%cmake -DBUILD_STATIC_LIBS=OFF                \
+       -DJSONCPP_WITH_WARNING_AS_ERROR=OFF    \
+       -DJSONCPP_WITH_PKGCONFIG_SUPPORT=ON    \
+       -DJSONCPP_WITH_CMAKE_PACKAGE=ON        \
+       .
+make %{?_smp_mflags}
 # Build the doc
 python doxybuild.py --with-dot --doxygen %{_bindir}/doxygen
 
-%check
-scons platform=linux-gcc check %{?_smp_mflags}
 
 %install
-install -p -D lib%{name}.so.0.0.0 $RPM_BUILD_ROOT%{_libdir}/lib%{name}.so.0.0.0
-ln -s %{_libdir}/lib%{name}.so.0.0.0 $RPM_BUILD_ROOT%{_libdir}/lib%{name}.so
-ln -s %{_libdir}/lib%{name}.so.0.0.0 $RPM_BUILD_ROOT%{_libdir}/lib%{name}.so.0
+make install DESTDIR=%{buildroot}
 
-install -d $RPM_BUILD_ROOT%{_includedir}/%{name}/json
-install -p -m 0644 include/json/*.h $RPM_BUILD_ROOT%{_includedir}/%{name}/json
-install -d $RPM_BUILD_ROOT%{_docdir}/%{name}
-install -p -m 0644 dist/doxygen/*/*.{html,png} $RPM_BUILD_ROOT%{_docdir}/%{name}
-install -d $RPM_BUILD_ROOT%{_libdir}/pkgconfig
-install -p -m 0644 %{SOURCE1} $RPM_BUILD_ROOT%{_libdir}/pkgconfig/
-sed -i 's|@@LIBDIR@@|%{_libdir}|g' $RPM_BUILD_ROOT%{_libdir}/pkgconfig/jsoncpp.pc
+mkdir -p $RPM_BUILD_ROOT%{_docdir}/%{name}/html
+for f in NEWS.txt README.md ; do
+    install -p -m 0644 $f $RPM_BUILD_ROOT%{_docdir}/%{name}
+done
+install -p -m 0644 dist/doxygen/*/*.{html,png} $RPM_BUILD_ROOT%{_docdir}/%{name}/html
+
+
+%check
+# Tests are run automatically in the build section
+# ctest -V %{?_smp_mflags}
+
 
 %post -p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
+
 %files
-%doc AUTHORS LICENSE NEWS.txt README.txt
-%{_libdir}/lib%{name}.so.0
-%{_libdir}/lib%{name}.so.0.0.0
+%license AUTHORS LICENSE
+%doc %dir %{_docdir}/%{name}
+%doc %{_docdir}/%{name}/README.md
+%exclude %{_docdir}/%{name}/html
+%{_libdir}/lib%{name}.so.*
+
 
 %files devel
+%doc %dir %{_docdir}/%{name}
+%doc %{_docdir}/%{name}/NEWS.txt
 %{_libdir}/lib%{name}.so
-%{_includedir}/%{name}/
+%{_includedir}/%{jsondir}/
+%{_libdir}/cmake
 %{_libdir}/pkgconfig/jsoncpp.pc
 
+
 %files doc
-%doc AUTHORS LICENSE NEWS.txt README.txt
-%{_docdir}/%{name}
+%{?_licensedir:%license %{_datadir}/licenses/%{name}*}
+%doc %{_docdir}/%{name}/
+
 
 %changelog
+* Fri Mar 25 2016 Björn Esser <fedora@besser82.io> - 0.10.5-1
+- Update to version 0.10.5
+- Use %%license and %%doc properly
+- Add generated CMake-target
+- Move %%check after %%install
+- Remove Group-tag, needed for el <= 5, only
+- Drop Patch0, not needed anymore
+- Disabled Werror
+- Add disttag
+- Use cmake instead of scons
+
 * Fri Mar 15 2013 Sébastien Willmann <sebastien.willmann@gmail.com> - 0.6.0-0.9.rc2
 - Changed Summary
 - Added %%doc files to the doc package
