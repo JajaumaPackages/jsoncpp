@@ -1,3 +1,4 @@
+%global optflags %(echo '%{optflags} -Wno-error')
 %global jsondir json
 
 Name:       jsoncpp
@@ -8,6 +9,8 @@ Summary:    JSON library implemented in C++
 License:    Public Domain or MIT
 URL:        https://github.com/open-source-parsers/jsoncpp
 Source0:    https://github.com/open-source-parsers/%{name}/archive/%{version}.tar.gz#/%{name}-%{version}.tar.gz
+
+Patch0:     nowerror.patch
 
 BuildRequires:  cmake
 BuildRequires:  doxygen
@@ -39,13 +42,20 @@ This package contains the documentation for %{name}.
 
 %prep
 %setup -q -n %{name}-%{version}
+%patch0 -p1
 
 
 %build
+%if 0%{?rhel} && 0%{?rhel} <= 6
+export LD_LIBRARY_PATH="$(pwd)/src/lib_json:${LD_LIBRARY_PATH}"
+%endif # 0%%{?rhel} && 0%%{?rhel} <= 6
 %cmake -DBUILD_STATIC_LIBS=OFF                \
        -DJSONCPP_WITH_WARNING_AS_ERROR=OFF    \
        -DJSONCPP_WITH_PKGCONFIG_SUPPORT=ON    \
        -DJSONCPP_WITH_CMAKE_PACKAGE=ON        \
+%if 0%{?rhel} && 0%{?rhel} <= 6
+       -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF \
+%endif # 0%%{?rhel} && 0%%{?rhel} <= 6
        .
 make %{?_smp_mflags}
 # Build the doc
