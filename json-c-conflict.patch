@@ -1,0 +1,19 @@
+diff -Nur jsoncpp-0.10.5/include/CMakeLists.txt jsoncpp-0.10.5.patched/include/CMakeLists.txt
+--- jsoncpp-0.10.5/include/CMakeLists.txt	2015-07-23 07:32:47.000000000 +0200
++++ jsoncpp-0.10.5.patched/include/CMakeLists.txt	2016-04-24 00:08:51.153854035 +0200
+@@ -1,2 +1,2 @@
+ FILE(GLOB INCLUDE_FILES "json/*.h")
+-INSTALL(FILES ${INCLUDE_FILES} DESTINATION ${INCLUDE_INSTALL_DIR}/json)
++INSTALL(FILES ${INCLUDE_FILES} DESTINATION ${INCLUDE_INSTALL_DIR}/jsoncpp/json)
+diff -Nur jsoncpp-0.10.5/pkg-config/jsoncpp.pc.in jsoncpp-0.10.5.patched/pkg-config/jsoncpp.pc.in
+--- jsoncpp-0.10.5/pkg-config/jsoncpp.pc.in	2015-07-23 07:32:47.000000000 +0200
++++ jsoncpp-0.10.5.patched/pkg-config/jsoncpp.pc.in	2016-04-24 00:14:11.877668310 +0200
+@@ -1,7 +1,7 @@
+ prefix=@CMAKE_INSTALL_PREFIX@
+ exec_prefix=${prefix}
+ libdir=@LIBRARY_INSTALL_DIR@
+-includedir=@INCLUDE_INSTALL_DIR@
++includedir=@INCLUDE_INSTALL_DIR@/jsoncpp
+ 
+ Name: jsoncpp
+ Description: A C++ library for interacting with JSON
