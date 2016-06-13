@@ -2,12 +2,14 @@
 
 Name:       jsoncpp
 Version:    1.7.2
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    JSON library implemented in C++
 
 License:    Public Domain or MIT
 URL:        https://github.com/open-source-parsers/jsoncpp
 Source0:    https://github.com/open-source-parsers/%{name}/archive/%{version}.tar.gz#/%{name}-%{version}.tar.gz
+
+Patch0: path.patch
 
 BuildRequires:  cmake
 BuildRequires:  doxygen
@@ -39,6 +41,7 @@ This package contains the documentation for %{name}.
 
 %prep
 %setup -q -n %{name}-%{version}
+%patch0 -p0
 
 
 %build
@@ -94,6 +97,9 @@ install -p -m 0644 dist/doxygen/*/*.{html,png} $RPM_BUILD_ROOT%{_docdir}/%{name}
 
 
 %changelog
+* Mon Jun 13 2016 Sébastien Willmann <sebastien.willmann@gmail.com> - 1.7.2-2
+- Fix include dir path (#1336082)
+
 * Sat Mar 26 2016 Björn Esser <fedora@besser82.io> - 1.7.2-1
 - Update to version 1.7.2
 
