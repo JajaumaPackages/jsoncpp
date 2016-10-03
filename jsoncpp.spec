@@ -1,7 +1,7 @@
 %global jsondir json
 
 Name:       jsoncpp
-Version:    1.7.4
+Version:    1.7.7
 Release:    1%{?dist}
 Summary:    JSON library implemented in C++
 
@@ -94,6 +94,9 @@ install -p -m 0644 dist/doxygen/*/*.{html,png} $RPM_BUILD_ROOT%{_docdir}/%{name}
 
 
 %changelog
+* Mon Oct 03 2016 Björn Esser <fedora@besser82.io> - 1.7.7-1
+- Update to version 1.7.7 (#1372329)
+
 * Sun Jul 17 2016 Sébastien Willmann <sebastien.willmann@gmail.com> - 1.7.4-1
 - Update to version 1.7.4
 
