@@ -1,7 +1,7 @@
 %global jsondir json
 
 Name:       jsoncpp
-Version:    1.7.7
+Version:    1.8.0
 Release:    1%{?dist}
 Summary:    JSON library implemented in C++
 
@@ -9,7 +9,7 @@ License:    Public Domain or MIT
 URL:        https://github.com/open-source-parsers/jsoncpp
 Source0:    https://github.com/open-source-parsers/%{name}/archive/%{version}.tar.gz#/%{name}-%{version}.tar.gz
 
-BuildRequires:  cmake
+BuildRequires:  cmake >= 3.1
 BuildRequires:  doxygen
 BuildRequires:  graphviz
 BuildRequires:  python
@@ -46,14 +46,15 @@ This package contains the documentation for %{name}.
        -DJSONCPP_WITH_WARNING_AS_ERROR=OFF    \
        -DJSONCPP_WITH_PKGCONFIG_SUPPORT=ON    \
        -DJSONCPP_WITH_CMAKE_PACKAGE=ON        \
+       -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF \
        .
-make %{?_smp_mflags}
+%make_build
 # Build the doc
 python doxybuild.py --with-dot --doxygen %{_bindir}/doxygen
 
 
 %install
-make install DESTDIR=%{buildroot}
+%make_install
 
 mkdir -p $RPM_BUILD_ROOT%{_docdir}/%{name}/html
 for f in NEWS.txt README.md ; do
@@ -63,8 +64,7 @@ install -p -m 0644 dist/doxygen/*/*.{html,png} $RPM_BUILD_ROOT%{_docdir}/%{name}
 
 
 %check
-# Tests are run automatically in the build section
-# ctest -V %{?_smp_mflags}
+%make_build jsoncpp_check
 
 
 %post -p /sbin/ldconfig
@@ -94,6 +94,11 @@ install -p -m 0644 dist/doxygen/*/*.{html,png} $RPM_BUILD_ROOT%{_docdir}/%{name}
 
 
 %changelog
+* Wed Dec 28 2016 Björn Esser <fedora@besser82.io> - 1.8.0-1
+- Update to version 1.8.0
+- Use up-to-date %%make-macros
+- Run testsuite during %%check instead during %%build
+
 * Mon Oct 03 2016 Björn Esser <fedora@besser82.io> - 1.7.7-1
 - Update to version 1.7.7 (#1372329)
 
@@ -196,4 +201,3 @@ install -p -m 0644 dist/doxygen/*/*.{html,png} $RPM_BUILD_ROOT%{_docdir}/%{name}
 
 * Tue Nov 27 2012 Sébastien Willmann <sebastien.willmann@gmail.com> 0.6.0-0.1.rc2
 - Creation of the spec file
-
