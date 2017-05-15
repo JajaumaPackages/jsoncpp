@@ -2,7 +2,7 @@
 
 Name:       jsoncpp
 Version:    1.8.0
-Release:    2%{?dist}
+Release:    3%{?dist}
 Summary:    JSON library implemented in C++
 
 License:    Public Domain or MIT
@@ -94,6 +94,9 @@ install -p -m 0644 dist/doxygen/*/*.{html,png} $RPM_BUILD_ROOT%{_docdir}/%{name}
 
 
 %changelog
+* Mon May 15 2017 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.8.0-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_27_Mass_Rebuild
+
 * Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.8.0-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
