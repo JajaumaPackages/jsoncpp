@@ -2,7 +2,7 @@
 
 Name:       jsoncpp
 Version:    1.8.1
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    JSON library implemented in C++
 
 License:    Public Domain or MIT
@@ -13,7 +13,7 @@ BuildRequires:  cmake >= 3.1
 BuildRequires:  doxygen
 BuildRequires:  graphviz
 BuildRequires:  hardlink
-BuildRequires:  python
+BuildRequires:  python3-devel
 
 %description
 %{name} is an implementation of a JSON (http://json.org) reader and writer in
@@ -50,13 +50,14 @@ pushd %{_target_platform}
        -DJSONCPP_WITH_PKGCONFIG_SUPPORT=ON    \
        -DJSONCPP_WITH_CMAKE_PACKAGE=ON        \
        -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF \
+       -DPYTHON_EXECUTABLE="%{__python3}"     \
        ..
 popd
 
 %make_build -C %{_target_platform}
 
 # Build the doc
-python doxybuild.py --with-dot --doxygen %{_bindir}/doxygen
+%{__python3} doxybuild.py --with-dot --doxygen %{_bindir}/doxygen
 
 
 %install
@@ -101,6 +102,9 @@ hardlink -cfv %{buildroot}%{_docdir}/%{name}
 
 
 %changelog
+* Sun Jul 02 2017 Björn Esser <besser82@fedoraproject.org> - 1.8.1-2
+- Use Python3 during build
+
 * Sun Jul 02 2017 Björn Esser <besser82@fedoraproject.org> - 1.8.1-1
 - Update to version 1.8.1 (rhbz#1467033)
 - Use autosetup-macro
