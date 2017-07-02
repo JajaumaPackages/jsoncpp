@@ -2,7 +2,7 @@
 
 Name:       jsoncpp
 Version:    1.8.1
-Release:    2%{?dist}
+Release:    3%{?dist}
 Summary:    JSON library implemented in C++
 
 License:    Public Domain or MIT
@@ -40,6 +40,8 @@ This package contains the documentation for %{name}.
 
 %prep
 %autosetup -p 1
+doxygen -s -u doc/doxyfile.in
+sed -i -e 's!^DOT_FONTNAME.*=.*!DOT_FONTNAME =!g' doc/doxyfile.in
 
 
 %build
@@ -102,6 +104,9 @@ hardlink -cfv %{buildroot}%{_docdir}/%{name}
 
 
 %changelog
+* Sun Jul 02 2017 Björn Esser <besser82@fedoraproject.org> - 1.8.1-3
+- Fix warnings from Doxygen
+
 * Sun Jul 02 2017 Björn Esser <besser82@fedoraproject.org> - 1.8.1-2
 - Use Python3 during build
 
