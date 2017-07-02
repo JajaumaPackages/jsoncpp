@@ -1,17 +1,18 @@
 %global jsondir json
 
 Name:       jsoncpp
-Version:    1.8.0
-Release:    3%{?dist}
+Version:    1.8.1
+Release:    1%{?dist}
 Summary:    JSON library implemented in C++
 
 License:    Public Domain or MIT
-URL:        https://github.com/open-source-parsers/jsoncpp
-Source0:    https://github.com/open-source-parsers/%{name}/archive/%{version}.tar.gz#/%{name}-%{version}.tar.gz
+URL:        https://github.com/open-source-parsers/%{name}
+Source0:    %{url}/archive/%{version}.tar.gz#/%{name}-%{version}.tar.gz
 
 BuildRequires:  cmake >= 3.1
 BuildRequires:  doxygen
 BuildRequires:  graphviz
+BuildRequires:  hardlink
 BuildRequires:  python
 
 %description
@@ -38,33 +39,39 @@ This package contains the documentation for %{name}.
 
 
 %prep
-%setup -q -n %{name}-%{version}
+%autosetup -p 1
 
 
 %build
+mkdir -p %{_target_platform}
+pushd %{_target_platform}
 %cmake -DBUILD_STATIC_LIBS=OFF                \
        -DJSONCPP_WITH_WARNING_AS_ERROR=OFF    \
        -DJSONCPP_WITH_PKGCONFIG_SUPPORT=ON    \
        -DJSONCPP_WITH_CMAKE_PACKAGE=ON        \
        -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF \
-       .
-%make_build
+       ..
+popd
+
+%make_build -C %{_target_platform}
+
 # Build the doc
 python doxybuild.py --with-dot --doxygen %{_bindir}/doxygen
 
 
 %install
-%make_install
+%make_install -C %{_target_platform}
 
-mkdir -p $RPM_BUILD_ROOT%{_docdir}/%{name}/html
+mkdir -p %{buildroot}%{_docdir}/%{name}/html
 for f in NEWS.txt README.md ; do
-    install -p -m 0644 $f $RPM_BUILD_ROOT%{_docdir}/%{name}
+    install -p -m 0644 $f %{buildroot}%{_docdir}/%{name}
 done
-install -p -m 0644 dist/doxygen/*/*.{html,png} $RPM_BUILD_ROOT%{_docdir}/%{name}/html
+install -p -m 0644 dist/doxygen/*/*.{html,png} %{buildroot}%{_docdir}/%{name}/html
+hardlink -cfv %{buildroot}%{_docdir}/%{name}
 
 
 %check
-%make_build jsoncpp_check
+%make_build -C %{_target_platform} jsoncpp_check
 
 
 %post -p /sbin/ldconfig
@@ -83,17 +90,23 @@ install -p -m 0644 dist/doxygen/*/*.{html,png} $RPM_BUILD_ROOT%{_docdir}/%{name}
 %doc %dir %{_docdir}/%{name}
 %doc %{_docdir}/%{name}/NEWS.txt
 %{_libdir}/lib%{name}.so
-%{_includedir}/%{jsondir}/
+%{_includedir}/%{jsondir}
 %{_libdir}/cmake
 %{_libdir}/pkgconfig/jsoncpp.pc
 
 
 %files doc
 %license %{_datadir}/licenses/%{name}*
-%doc %{_docdir}/%{name}/
+%doc %{_docdir}/%{name}
 
 
 %changelog
+* Sun Jul 02 2017 Björn Esser <besser82@fedoraproject.org> - 1.8.1-1
+- Update to version 1.8.1 (rhbz#1467033)
+- Use autosetup-macro
+- Build out of tree
+- Hardlink documentation files
+
 * Mon May 15 2017 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.8.0-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_27_Mass_Rebuild
 
