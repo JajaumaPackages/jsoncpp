@@ -2,8 +2,8 @@
 %global jsondir jsoncpp
 
 Name:       jsoncpp
-Version:    0.10.5
-Release:    2%{?dist}
+Version:    0.10.6
+Release:    1%{?dist}
 Summary:    JSON library implemented in C++
 
 License:    Public Domain or MIT
@@ -106,6 +106,9 @@ install -p -m 0644 dist/doxygen/*/*.{html,png} $RPM_BUILD_ROOT%{_docdir}/%{name}
 
 
 %changelog
+* Sun Aug 06 2017 Jajauma's Packages <jajauma@yandex.ru> - 0.10.6-1
+- Update to latest upstream release
+
 * Sat Apr 23 2016 Sébastien Willmann <sebastien.willmann@gmail.com> - 0.10.5-2
 - Fix file conflict with json-c
 
