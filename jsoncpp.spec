@@ -2,7 +2,7 @@
 
 Name:       jsoncpp
 Version:    0.10.6
-Release:    8%{?dist}
+Release:    9%{?dist}
 Summary:    JSON library implemented in C++
 
 License:    Public Domain or MIT
@@ -103,6 +103,9 @@ install -p -m 0644 dist/doxygen/*/*.{html,png} $RPM_BUILD_ROOT%{_docdir}/%{name}
 
 
 %changelog
+* Sun Aug 06 2017 Jajauma's Packages <jajauma@yandex.ru> - 0.10.6-9
+- Rebuild for x86_64 and i686
+
 * Sun Aug 06 2017 Jajauma's Packages <jajauma@yandex.ru> - 0.10.6-8
 - Update to latest upstream release
 - Drop nowerror.patch
