@@ -1,4 +1,3 @@
-%global optflags %(echo '%{optflags} -Wno-error')
 %global jsondir jsoncpp
 
 Name:       jsoncpp
@@ -10,7 +9,6 @@ License:    Public Domain or MIT
 URL:        https://github.com/open-source-parsers/jsoncpp
 Source0:    https://github.com/open-source-parsers/%{name}/archive/%{version}.tar.gz#/%{name}-%{version}.tar.gz
 
-Patch0:     nowerror.patch
 Patch1:     json-c-conflict.patch
 
 BuildRequires:  cmake
@@ -43,7 +41,6 @@ This package contains the documentation for %{name}.
 
 %prep
 %setup -q -n %{name}-%{version}
-%patch0 -p1
 %patch1 -p1
 
 
