@@ -1,8 +1,8 @@
 %global jsondir json
 
 Name:       jsoncpp
-Version:    1.8.1
-Release:    6%{?dist}
+Version:    1.8.3
+Release:    1%{?dist}
 Summary:    JSON library implemented in C++
 
 License:    Public Domain or MIT
@@ -66,7 +66,7 @@ popd
 %make_install -C %{_target_platform}
 
 mkdir -p %{buildroot}%{_docdir}/%{name}/html
-for f in NEWS.txt README.md ; do
+for f in README.md ; do
     install -p -m 0644 $f %{buildroot}%{_docdir}/%{name}
 done
 install -p -m 0644 dist/doxygen/*/*.{html,png} %{buildroot}%{_docdir}/%{name}/html
@@ -104,6 +104,9 @@ hardlink -cfv %{buildroot}%{_docdir}/%{name}
 
 
 %changelog
+* Tue Aug 29 2017 Björn Esser <besser82@fedoraproject.org> - 1.8.3-1
+- Update to version 1.8.3 (rhbz#1485908)
+
 * Mon Aug 07 2017 Björn Esser <besser82@fedoraproject.org> - 1.8.1-6
 - Rebuilt for AutoReq cmake-filesystem
 
