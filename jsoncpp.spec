@@ -90,8 +90,6 @@ hardlink -cfv %{buildroot}%{_docdir}/%{name}
 
 
 %files devel
-%doc %dir %{_docdir}/%{name}
-%doc %{_docdir}/%{name}/NEWS.txt
 %{_libdir}/lib%{name}.so
 %{_includedir}/%{jsondir}
 %{_libdir}/cmake/*
@@ -100,7 +98,7 @@ hardlink -cfv %{buildroot}%{_docdir}/%{name}
 
 %files doc
 %license %{_datadir}/licenses/%{name}*
-%doc %{_docdir}/%{name}
+%doc %{_docdir}/%{name}*
 
 
 %changelog
