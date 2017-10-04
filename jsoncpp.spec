@@ -1,3 +1,6 @@
+# Build documentation in HTML with images
+%bcond_without jsoncpp_enables_doc
+
 %global jsondir json
 
 Name:       jsoncpp
@@ -10,10 +13,12 @@ URL:        https://github.com/open-source-parsers/%{name}
 Source0:    %{url}/archive/%{version}.tar.gz#/%{name}-%{version}.tar.gz
 
 BuildRequires:  cmake >= 3.1
+%if %{with jsoncpp_enables_doc}
 BuildRequires:  doxygen
 BuildRequires:  graphviz
 BuildRequires:  hardlink
 BuildRequires:  python3-devel
+%endif
 
 %description
 %{name} is an implementation of a JSON (http://json.org) reader and writer in
@@ -30,18 +35,22 @@ Requires:   %{name}%{?_isa} = %{version}-%{release}
 This package contains the development headers and library for %{name}.
 
 
+%if %{with jsoncpp_enables_doc}
 %package doc
 Summary:    Documentation for %{name}
 BuildArch:  noarch
 
 %description doc
 This package contains the documentation for %{name}.
+%endif
 
 
 %prep
 %autosetup -p 1
+%if %{with jsoncpp_enables_doc}
 doxygen -s -u doc/doxyfile.in
 sed -i -e 's!^DOT_FONTNAME.*=.*!DOT_FONTNAME =!g' doc/doxyfile.in
+%endif
 
 
 %build
@@ -58,19 +67,23 @@ popd
 
 %make_build -C %{_target_platform}
 
+%if %{with jsoncpp_enables_doc}
 # Build the doc
 %{__python3} doxybuild.py --with-dot --doxygen %{_bindir}/doxygen
+%endif
 
 
 %install
 %make_install -C %{_target_platform}
 
+%if %{with jsoncpp_enables_doc}
 mkdir -p %{buildroot}%{_docdir}/%{name}/html
 for f in README.md ; do
     install -p -m 0644 $f %{buildroot}%{_docdir}/%{name}
 done
 install -p -m 0644 dist/doxygen/*/*.{html,png} %{buildroot}%{_docdir}/%{name}/html
 hardlink -cfv %{buildroot}%{_docdir}/%{name}
+%endif
 
 
 %check
@@ -83,9 +96,11 @@ hardlink -cfv %{buildroot}%{_docdir}/%{name}
 
 %files
 %license AUTHORS LICENSE
+%if %{with jsoncpp_enables_doc}
 %doc %dir %{_docdir}/%{name}
 %doc %{_docdir}/%{name}/README.md
 %exclude %{_docdir}/%{name}/html
+%endif
 %{_libdir}/lib%{name}.so.*
 
 
@@ -96,9 +111,11 @@ hardlink -cfv %{buildroot}%{_docdir}/%{name}
 %{_libdir}/pkgconfig/jsoncpp.pc
 
 
+%if %{with jsoncpp_enables_doc}
 %files doc
 %license %{_datadir}/licenses/%{name}*
 %doc %{_docdir}/%{name}*
+%endif
 
 
 %changelog
