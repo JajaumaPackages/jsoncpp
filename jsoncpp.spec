@@ -17,8 +17,8 @@ BuildRequires:  cmake >= 3.1
 BuildRequires:  doxygen
 BuildRequires:  graphviz
 BuildRequires:  hardlink
-BuildRequires:  python3-devel
 %endif
+BuildRequires:  python3-devel
 
 %description
 %{name} is an implementation of a JSON (http://json.org) reader and writer in
