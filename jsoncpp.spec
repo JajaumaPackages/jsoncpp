@@ -3,6 +3,14 @@
 
 %global jsondir json
 
+%if 0%{?fedora} || 0%{?rhel} > 7
+%global py_command %{__python3}
+%global py_package python3-devel
+%else
+%global py_command %{__python}
+%global py_package python-devel
+%endif
+
 Name:       jsoncpp
 Version:    1.8.3
 Release:    1%{?dist}
@@ -18,7 +26,7 @@ BuildRequires:  doxygen
 BuildRequires:  graphviz
 BuildRequires:  hardlink
 %endif
-BuildRequires:  python3-devel
+BuildRequires:  %{py_package}
 
 %description
 %{name} is an implementation of a JSON (http://json.org) reader and writer in
@@ -61,7 +69,7 @@ pushd %{_target_platform}
        -DJSONCPP_WITH_PKGCONFIG_SUPPORT=ON    \
        -DJSONCPP_WITH_CMAKE_PACKAGE=ON        \
        -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF \
-       -DPYTHON_EXECUTABLE="%{__python3}"     \
+       -DPYTHON_EXECUTABLE="%{py_command}"    \
        ..
 popd
 
@@ -69,7 +77,7 @@ popd
 
 %if %{with jsoncpp_enables_doc}
 # Build the doc
-%{__python3} doxybuild.py --with-dot --doxygen %{_bindir}/doxygen
+%{py_command} doxybuild.py --with-dot --doxygen %{_bindir}/doxygen
 %endif
 
 
